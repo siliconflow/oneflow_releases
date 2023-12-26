@@ -16,6 +16,10 @@ on:
         description: "compute platform of oneflow"
         type: string
         required: true
+      release_tag:
+        description: "GH tag for release"
+        type: string
+        required: true
       oneflow_index:
         description: "index URL of oneflow"
         type: string
@@ -24,21 +28,10 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  generate_id:
-    name: Generate ID of release
-    runs-on: ubuntu-latest
-    outputs:
-      formatted_date: ${{ steps.date.outputs.formatted_date }}
-    steps:
-      - name: Get current date
-        id: date
-        run: echo "formatted_date=$(date +'%Y-%m-%d-%H%M')" >> $GITHUB_OUTPUT
-
   # This workflow contains a single job called "build"
   upload:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    needs: [generate_id]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
