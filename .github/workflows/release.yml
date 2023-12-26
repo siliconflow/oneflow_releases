@@ -42,7 +42,7 @@ jobs:
       # Runs a single command using the runners shell
       - id: generete_json
         run: |
-          echo "matrix=$(curl ${{ inputs.oneflow_index}}/${{ inputs.oneflow_branch}}/${{ inputs.compute_platform }} | grep -oh 'https.*\.whl' | jq -R '{url: .}')" >> $GITHUB_OUTPUT
+          echo "matrix=\"$(curl ${{ inputs.oneflow_index}}/${{ inputs.oneflow_branch}}/${{ inputs.compute_platform }} | grep -oh 'https.*\.whl' | jq -R '{url: .}')\"" >> $GITHUB_OUTPUT
 
   upload:
     # The type of runner that the job will run on
