@@ -52,17 +52,9 @@ jobs:
       # Runs a single command using the runners shell
       - name: Download file
         run: wget --quiet "${{ matrix.package.url }}"
-      - name: Set filename
-        id: set_filename
-        run: echo "filename=$(basename ${{ matrix.package.url }})" >> $GITHUB_OUTPUT
       - name: Publish archives
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ steps.set_filename.outputs.filename }}
+            *.whl
           tag_name: ${{ inputs.release_tag }}
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
