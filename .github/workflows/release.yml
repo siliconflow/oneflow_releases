@@ -54,7 +54,7 @@ jobs:
         run: wget --quiet "${{ matrix.package.url }}"
       - name: Set filename
         id: set_filename
-        run: echo "filename=$(( basename ${{ matrix.package.url }} ))" >> $GITHUB_OUTPUT
+        run: echo "filename=$(basename ${{ matrix.package.url }})" >> $GITHUB_OUTPUT
       - name: Publish archives
         uses: softprops/action-gh-release@v1
         with:

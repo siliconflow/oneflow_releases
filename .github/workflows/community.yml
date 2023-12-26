@@ -31,8 +31,8 @@ jobs:
       matrix:
         compute_platform: ["cu122", "cu121", "cu118", "cpu"]
     permissions:
-      contents: read
-      pull-requests: write
+      contents: write
+
     uses: ./.github/workflows/release.yml
     with:
       oneflow_branch: "community"
