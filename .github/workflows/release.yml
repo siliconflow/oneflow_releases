@@ -53,8 +53,13 @@ jobs:
       - name: Download file
         run: wget --quiet "${{ matrix.package.url }}"
       - name: Publish archives
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1.12.0
         with:
-          files: |
-            *.whl
-          tag_name: ${{ inputs.release_tag }}
+          artifacts: "*.whl"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: ${{ inputs.release_tag }}
+          name: "latest ${{ inputs.release_tag }}"
+          removeArtifacts: false
+          allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: true
