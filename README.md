@@ -2,5 +2,5 @@
 
 ## Example links
 ```
-https://github.com/siliconflow/oneflow_releases/releases/expanded_assets/cu122-2023-12-26-0521
+python3 -m pip install --pre oneflow -f https://github.com/siliconflow/oneflow_releases/releases/expanded_assets/community-cu122
 ```
