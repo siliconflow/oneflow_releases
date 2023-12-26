@@ -36,13 +36,12 @@ jobs:
     outputs:
       matrix: ${{ steps.generete_json.outputs.matrix }}
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v3
       - run: sudo apt-get install jq
       # Runs a single command using the runners shell
       - id: generete_json
         run: |
-          echo "matrix=\"$(curl ${{ inputs.oneflow_index}}/${{ inputs.oneflow_branch}}/${{ inputs.compute_platform }} | grep -oh 'https.*\.whl' | jq -R '{url: .}')\"" >> $GITHUB_OUTPUT
+          matrix=$(curl https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/community/cu118 | grep -oh 'https.*\.whl' | jq -sR 'split("\n") | map(select(length > 0) | {url: .}) | {package: .}')
+          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   upload:
     # The type of runner that the job will run on
