@@ -12,10 +12,6 @@ on:
         description: "branch of oneflow"
         type: string
         required: true
-      compute_platform:
-        description: "compute platform of oneflow"
-        type: string
-        required: true
       release_tag:
         description: "GH tag for release"
         type: string
@@ -55,8 +51,16 @@ jobs:
     steps:
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: echo "${{ matrix.package.url }}"
-
+        run: wget --quiet "${{ matrix.package.url }}"
+      - name: Set filename
+        id: set_filename
+        run: echo "filename=$(( basename ${{ matrix.package.url }} ))" >> $GITHUB_OUTPUT
+      - name: Publish archives
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ steps.set_filename.outputs.filename }}
+          tag_name: ${{ inputs.release_tag }}
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |

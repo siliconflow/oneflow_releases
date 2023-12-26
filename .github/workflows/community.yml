@@ -36,5 +36,4 @@ jobs:
     uses: ./.github/workflows/release.yml
     with:
       oneflow_branch: "community"
-      compute_platform: ${{ matrix.compute_platform }}
-      release_tag: ${{ needs.generate_id.outputs.formatted_date }}
+      release_tag: ${{ needs.generate_id.outputs.formatted_date }}-${{ matrix.compute_platform }}
