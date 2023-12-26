@@ -14,10 +14,15 @@ concurrency:
 
 jobs:
   publish:
-    name: Latest OneFlow
+    name: ${{ matrix.compute_platform }}
     permissions:
       contents: read
       pull-requests: write
     uses: ./.github/workflows/release.yml
+    strategy:
+      fail-fast: false
+      matrix:
+        compute_platform: ["cu122", "cu121", "cu118", "cpu"]
     with:
       oneflow_branch: "community"
+      compute_platform: ${{ matrix.compute_platform }}
