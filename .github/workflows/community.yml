@@ -1,0 +1,39 @@
+name: Publish Community
+
+on:
+  schedule:
+    - cron: "00 09 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - "community/*"
+
+concurrency:
+  group: publish-community-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate_id:
+    name: Generate ID of release
+    runs-on: ubuntu-latest
+    outputs:
+      formatted_date: ${{ steps.date.outputs.formatted_date }}
+    steps:
+      - name: Get current date
+        id: date
+        run: echo "formatted_date=$(date +'%Y-%m-%d-%H%M')" >> $GITHUB_OUTPUT
+
+  publish:
+    name: ${{ matrix.compute_platform }}
+    needs: [generate_id]
+    strategy:
+      fail-fast: false
+      matrix:
+        compute_platform: ["cu122", "cu121", "cu118", "cpu"]
+    permissions:
+      contents: write
+
+    uses: ./.github/workflows/release.yml
+    with:
+      oneflow_branch: "community"
+      release_tag: community_${{ matrix.compute_platform }}

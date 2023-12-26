@@ -1,0 +1,65 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Publish pip packages to GH releases
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_call:
+    inputs:
+      oneflow_branch:
+        description: "branch of oneflow"
+        type: string
+        required: true
+      release_tag:
+        description: "GH tag for release"
+        type: string
+        required: true
+      oneflow_index:
+        description: "index URL of oneflow"
+        type: string
+        required: false
+        default: "https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch"
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  extract_urls:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    outputs:
+      matrix: ${{ steps.generete_json.outputs.matrix }}
+    steps:
+      - run: sudo apt-get install jq
+      # Runs a single command using the runners shell
+      - id: generete_json
+        run: |
+          matrix=$(curl https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/community/cu118 | grep -oh 'https.*\.whl' | jq -c -sR 'split("\n") | map(select(length > 0)) | map({python: (. | capture("(?<pyv>cp[0-9]+)-cp").pyv), url: .}) | unique_by(.python) | {package: .}')
+          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
+
+  upload:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    name: Upload ${{ matrix.package.python }}
+    needs: [extract_urls]
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.extract_urls.outputs.matrix) }}
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Runs a single command using the runners shell
+      - name: Download file
+        run: wget --quiet "${{ matrix.package.url }}"
+      - name: Publish archives
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          artifacts: "*.whl"
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          tag: ${{ inputs.release_tag }}
+          name: "latest ${{ inputs.release_tag }}"
+          removeArtifacts: false
+          allowUpdates: true
+          replacesArtifacts: true
+          makeLatest: false
