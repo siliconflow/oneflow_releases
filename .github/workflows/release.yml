@@ -40,12 +40,13 @@ jobs:
       # Runs a single command using the runners shell
       - id: generete_json
         run: |
-          matrix=$(curl https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/community/cu118 | grep -oh 'https.*\.whl' | jq -c -sR 'split("\n") | map(select(length > 0) | {url: .}) | map({key: (.url | capture("(?<pyv>cp[0-9]+)-cp").pyv), value: .}) | unique_by(.key) | map(.value) | {package: .}')
+          matrix=$(curl https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/community/cu118 | grep -oh 'https.*\.whl' | jq -c -sR 'split("\n") | map(select(length > 0)) | map({python: (. | capture("(?<pyv>cp[0-9]+)-cp").pyv), url: .}) | unique_by(.python) | {package: .}')
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   upload:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    name: Upload ${{ matrix.package.python }}
     needs: [extract_urls]
     strategy:
       fail-fast: false
