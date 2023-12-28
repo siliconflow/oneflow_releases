@@ -16,6 +16,10 @@ on:
         description: "GH tag for release"
         type: string
         required: true
+      compute_platform:
+        description: "GH tag for release"
+        type: string
+        required: true
       oneflow_index:
         description: "index URL of oneflow"
         type: string
@@ -36,7 +40,7 @@ jobs:
       # Runs a single command using the runners shell
       - id: generete_json
         run: |
-          matrix=$(curl https://oneflow-pro.oss-cn-beijing.aliyuncs.com/branch/community/cu118 | grep -oh 'https.*\.whl' | jq -c -sR 'split("\n") | map(select(length > 0)) | map({python: (. | capture("(?<pyv>cp[0-9]+)-cp").pyv), url: .}) | unique_by(.python) | {package: .}')
+          matrix=$(curl ${{ inputs.oneflow_index }}/${{ inputs.oneflow_branch }}/${{ inputs.compute_platform }} | grep -oh 'https.*\.whl' | jq -c -sR 'split("\n") | map(select(length > 0)) | map({python: (. | capture("(?<pyv>cp[0-9]+)-cp").pyv), url: .}) | unique_by(.python) | {package: .}')
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   upload:
