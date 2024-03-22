@@ -29,7 +29,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compute_platform: ["cu122", "cu121", "cu118", "cpu"]
+        compute_platform: ["cu118"]
     permissions:
       contents: write
 
